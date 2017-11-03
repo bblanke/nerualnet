@@ -21,7 +21,7 @@ module row_index_counter(
   wire [3:0] restarted_row_index;
   assign restarted_row_index = row_index - 4'b0010;
 
-  assign increment_row = new_row || new_quadrant_row;
+  assign increment_row = (new_row || new_quadrant_row) && en;
 
   always @ (posedge clock) begin
     case({clear_counter,restart_counter, increment_row})

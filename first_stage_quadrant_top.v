@@ -3,8 +3,9 @@ module first_stage_quadrant_top(
   input wire clear,
   input wire en,
   input wire [1:0] quadrant,
-  output wire [7:0] filter_address,
-  output wire filter_address_ready,
+  input wire [15:0] b_element,
+  output wire [8:0] b_element_address,
+  output wire b_element_requested,
   output wire [11:0] input_address,
   output wire input_address_ready
   );
@@ -24,6 +25,5 @@ module first_stage_quadrant_top(
   wire [1:0] vector_index;
   vector_index_counter c3(.en(en), .clear(clear), .clock(clock), .new_vector(new_vector), .vector_index(vector_index));
 
-  assign filter_address = {4'b0, element_index};
-  assign input_address = {4'b0, row_index, column_index};
+
 endmodule

@@ -28,10 +28,12 @@ module column_index_counter(
   assign restart_counter = new_row && ~new_vector; // only want to restart (move back by 3) if there's a new row but not a new vector ready
 
   always @(posedge clock) begin
-    case ({clear_counter,restart_counter})
-      2'b00: column_index <= column_index + 4'b0001;
-      2'b01: column_index <= column_index - 4'b0010;
-      2'b1x: column_index <= base_column_index;
+    case ({clear_counter,restart_counter, en})
+      3'b000: column_index <= column_index;
+      3'b001: column_index <= column_index + 4'b0001;
+      3'b010: column_index <= column_index;
+      3'b011: column_index <= column_index - 4'b0010;
+      3'b1xx: column_index <= base_column_index;
       default: column_index <= base_column_index;
     endcase
   end
