@@ -33,7 +33,7 @@ module filter_memory_manager(
   reg [3:0] vector_cache_address;
 
   assign all_b_vectors_cached = b0_cached && b1_cached && b2_cached && b3_cached;
-  
+
   // Counter to loop through the currently selected element
   wire [3:0] element_index;
   wire new_vector;
@@ -41,8 +41,8 @@ module filter_memory_manager(
 
   // Counter to loop through the currently selected vector
   wire [1:0] vector_index;
-  wire restarting_counter;
-  vector_index_counter c1(.en(en), .clock(clock), .clear(clear), .new_vector(new_vector), .vector_index(vector_index), .restart_counter(restarting_counter));
+  assign reset_vector_index = (vector_index == 2'b11 && new_vector);
+  two_bit_counter c1(.en(en), .clock(clock), .clear(reset_vector_index), .increment(new_vector), .counter(vector_index));
 
   reg write_b0;
   wire [15:0] cached_b0;

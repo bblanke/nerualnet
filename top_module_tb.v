@@ -28,7 +28,7 @@ module top_module_tb();
   filter_ram m0(.clock(clock), .enable(filter_ram_enable), .address(filter_ram_address), .read_data(filter_ram_read_data), .write(filter_ram_write), .write_data(filter_ram__write_data));
 
   initial begin
-    $monitor("clock: %b, element index: %h, b0: %h, b1: %h, b2: %h, b3: %h, new: %b, b0 cache: %b", clock, filter_ram_address, DUT.b0_element, DUT.b1_element, DUT.b2_element, DUT.b3_element, DUT.m1.new_vector, DUT.m1.b0_cached);
+    $monitor("clock: %b, mem addr: %h, cache addr: %d, a0 cached: %b", clock, input_ram_address, DUT.m2.input_quadrant_index, DUT.m2.a0_cached);
     clock = 1'b0;
     go = 1'b0;
     #10

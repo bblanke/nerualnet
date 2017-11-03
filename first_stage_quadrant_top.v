@@ -27,3 +27,15 @@ module first_stage_quadrant_top(
 
 
 endmodule
+
+module first_stage_quadrant_top(
+  input wire clock,
+  input wire clear,
+  input wire go,
+  input wire [15:0] b0_element,
+  input wire [15:0] b1_element,
+  input wire [15:0] b2_element,
+  input wire [15:0] b3_element
+  );
+
+endmodule
