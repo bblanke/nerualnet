@@ -43,18 +43,21 @@ module top_module(
   wire global_enable;
   enable_state_controller m0(.clear(reset), .clock(clk), .go(xxx__dut__go), .finish(), .enable(global_enable));
 
-  wire b_elements_ready;
+  wire b_element_ready;
   wire [15:0] b0_element;
   wire [15:0] b1_element;
   wire [15:0] b2_element;
   wire [15:0] b3_element;
-  filter_memory_manager m1(.en(global_enable), .clear(reset), .clock(clk), .vector_element(bvm__dut__data), .vector_memory_address(dut__bvm__address), .memory_enable(dut__bvm__enable), .memory_write(dut__bvm__write), .b_elements_ready(b_elements_ready), .b0_element(b0_element), .b1_element(b1_element), .b2_element(b2_element), .b3_element(b3_element));
+  filter_memory_manager m1(.en(global_enable), .clear(reset), .clock(clk), .vector_element(bvm__dut__data), .vector_memory_address(dut__bvm__address), .memory_enable(dut__bvm__enable), .memory_write(dut__bvm__write), .b_element_ready(b_element_ready), .b0_element(b0_element), .b1_element(b1_element), .b2_element(b2_element), .b3_element(b3_element));
 
   wire a_element_ready;
   wire [15:0] a0_element;
   wire [15:0] a1_element;
   wire [15:0] a2_element;
   wire [15:0] a3_element;
-  input_memory_manager m2(.en(global_enable), .clear(reset), .clock(clk), .vector_element(dim__dut__data), .vector_memory_address(dut__dim__address), .memory_enable(dut__dim__enable), .memory_write(dut__dim__write), .a_element_ready(a_element_ready), .a0_element(a0_element), .a1_element(a1_element), .a2_element(a2_element), .a3_element(a3_element));
+  wire new_a_vector;
+  input_memory_manager m2(.en(global_enable), .clear(reset), .clock(clk), .vector_element(dim__dut__data), .vector_memory_address(dut__dim__address), .memory_enable(dut__dim__enable), .memory_write(dut__dim__write), .a_element_ready(a_element_ready), .a0_element(a0_element), .a1_element(a1_element), .a2_element(a2_element), .a3_element(a3_element), .vector_restarting(new_a_vector));
+
+
 
 endmodule

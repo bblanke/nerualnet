@@ -1,5 +1,4 @@
 module two_bit_counter(
-  input wire en,
   input wire clock,
   input wire clear,
   input wire increment,

@@ -10,7 +10,7 @@ module filter_memory_manager(
   output wire memory_write,
 
   // Interact with the other internal modules
-  output reg b_elements_ready,
+  output reg b_element_ready,
   output reg [15:0] b0_element,
   output reg [15:0] b1_element,
   output reg [15:0] b2_element,
@@ -41,22 +41,22 @@ module filter_memory_manager(
 
   // Counter to loop through the currently selected vector
   wire [1:0] vector_index;
-  assign reset_vector_index = (vector_index == 2'b11 && new_vector);
-  two_bit_counter c1(.en(en), .clock(clock), .clear(reset_vector_index), .increment(new_vector), .counter(vector_index));
+  assign reset_vector_index = clear || (vector_index == 2'b11 && new_vector);
+  two_bit_counter c1(.clock(clock), .clear(reset_vector_index), .increment(new_vector), .counter(vector_index));
 
-  reg write_b0;
+  wire write_b0;
   wire [15:0] cached_b0;
   b_vector_cache b0(.clock(clock), .address(vector_cache_address), .write(write_b0), .vector_write_element(vector_element), .vector_read_element(cached_b0));
 
-  reg write_b1;
+  wire write_b1;
   wire [15:0] cached_b1;
   b_vector_cache b1(.clock(clock), .address(vector_cache_address), .write(write_b1), .vector_write_element(vector_element), .vector_read_element(cached_b1));
 
-  reg write_b2;
+  wire write_b2;
   wire [15:0] cached_b2;
   b_vector_cache b2(.clock(clock), .address(vector_cache_address), .write(write_b2), .vector_write_element(vector_element), .vector_read_element(cached_b2));
 
-  reg write_b3;
+  wire write_b3;
   wire [15:0] cached_b3;
   b_vector_cache b3(.clock(clock), .address(vector_cache_address), .write(write_b3), .vector_write_element(vector_element), .vector_read_element(cached_b3));
 
@@ -75,18 +75,18 @@ module filter_memory_manager(
     b2_cached <= clear ? 1'b0 : (b2_finishing ? 1'b1 : b2_cached);
     b3_cached <= clear ? 1'b0 : (b3_finishing ? 1'b1 : b3_cached);
 
-    write_b0 <= en && ~b0_cached;
-    write_b1 <= en && ~b1_cached;
-    write_b2 <= en && ~b2_cached;
-    write_b3 <= en && ~b3_cached;
-
     b0_element <= b0_cached ? cached_b0 : vector_element;
     b1_element <= b1_cached ? cached_b1 : vector_element;
     b2_element <= b2_cached ? cached_b2 : vector_element;
     b3_element <= b3_cached ? cached_b3 : vector_element;
 
     new_element_ready <= clear ? 1'b0 : en;
-    b_elements_ready <= new_element_ready ? 1'b1 : 1'b0;
+    b_element_ready <= new_element_ready ? 1'b1 : 1'b0;
   end
+
+  assign write_b0 = en && ~b0_cached;
+  assign write_b1 = en && ~b1_cached;
+  assign write_b2 = en && ~b2_cached;
+  assign write_b3 = en && ~b3_cached;
 
 endmodule
