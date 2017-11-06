@@ -30,7 +30,7 @@ module top_module_tb();
   input_ram m1(.clock(clock), .enable(input_ram_enable), .address(input_ram_address), .read_data(input_ram_read_data), .write(input_ram_write), .write_data(input_ram_write_data));
 
   initial begin
-    $monitor("clock: %b, enable: %b, a cache: %h, a0_element: %h, a0 cache: %b", clock, DUT.global_enable, DUT.m2.vector_cache_address, DUT.a0_element, DUT.m2.a0_cached);
+    $monitor("clock: %b, enable: %b, z0: %h, z0_ready: %b\tz1: %h, z1_ready: %b\tz2: %h, z2_ready: %b\tz3: %h, z3_ready: %b", clock, DUT.global_enable, DUT.z0_element, DUT.z0_element_ready, DUT.z1_element, DUT.z1_element_ready, DUT.z2_element, DUT.z2_element_ready, DUT.z3_element, DUT.z3_element_ready);
     clock = 1'b0;
     go = 1'b0;
     #10

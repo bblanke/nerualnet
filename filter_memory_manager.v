@@ -14,17 +14,19 @@ module filter_memory_manager(
   output reg [15:0] b0_element,
   output reg [15:0] b1_element,
   output reg [15:0] b2_element,
-  output reg [15:0] b3_element
+  output reg [15:0] b3_element,
+
+  output reg b0_cached,
+  output reg b1_cached,
+  output reg b2_cached,
+  output reg b3_cached,
+
+  output reg last_element
   );
 
   assign memory_write = 1'b0;
   reg new_element_ready;
-
-  reg b0_cached;
-  reg b1_cached;
-  reg b2_cached;
-  reg b3_cached;
-
+  
   reg b0_finishing;
   reg b1_finishing;
   reg b2_finishing;
@@ -36,40 +38,43 @@ module filter_memory_manager(
 
   // Counter to loop through the currently selected element
   wire [3:0] element_index;
-  wire new_vector;
-  element_index_counter c0(.en(en), .clock(clock), .clear(clear), .element_index(element_index), .new_row(), .new_vector(new_vector));
+  wire restart_element_index;
+  element_index_counter c0(.en(en), .clock(clock), .clear(clear), .element_index(element_index), .new_vector(restart_element_index));
 
   // Counter to loop through the currently selected vector
   wire [1:0] vector_index;
-  assign reset_vector_index = clear || (vector_index == 2'b11 && new_vector);
-  two_bit_counter c1(.clock(clock), .clear(reset_vector_index), .increment(new_vector), .counter(vector_index));
+  assign reset_vector_index = clear || (vector_index == 2'b11 && restart_element_index);
+  two_bit_counter c1(.clock(clock), .clear(reset_vector_index), .increment(restart_element_index), .counter(vector_index));
 
   wire write_b0;
   wire [15:0] cached_b0;
-  b_vector_cache b0(.clock(clock), .address(vector_cache_address), .write(write_b0), .vector_write_element(vector_element), .vector_read_element(cached_b0));
+  vector_cache b0(.clock(clock), .address(vector_cache_address), .write(write_b0), .vector_write_element(vector_element), .vector_read_element(cached_b0));
 
   wire write_b1;
   wire [15:0] cached_b1;
-  b_vector_cache b1(.clock(clock), .address(vector_cache_address), .write(write_b1), .vector_write_element(vector_element), .vector_read_element(cached_b1));
+  vector_cache b1(.clock(clock), .address(vector_cache_address), .write(write_b1), .vector_write_element(vector_element), .vector_read_element(cached_b1));
 
   wire write_b2;
   wire [15:0] cached_b2;
-  b_vector_cache b2(.clock(clock), .address(vector_cache_address), .write(write_b2), .vector_write_element(vector_element), .vector_read_element(cached_b2));
+  vector_cache b2(.clock(clock), .address(vector_cache_address), .write(write_b2), .vector_write_element(vector_element), .vector_read_element(cached_b2));
 
   wire write_b3;
   wire [15:0] cached_b3;
-  b_vector_cache b3(.clock(clock), .address(vector_cache_address), .write(write_b3), .vector_write_element(vector_element), .vector_read_element(cached_b3));
+  vector_cache b3(.clock(clock), .address(vector_cache_address), .write(write_b3), .vector_write_element(vector_element), .vector_read_element(cached_b3));
 
+  reg _last_element;
   always @(posedge clock) begin
     memory_enable <= en ? 1'b1 : 1'b0;
     vector_memory_address <= all_b_vectors_cached ? 9'b0 : {1'b0, vector_index, element_index};
     vector_cache_address <= element_index;
 
-    b0_finishing <= clear ? 1'b0 : (vector_index == 2'b00 && new_vector);
-    b1_finishing <= clear ? 1'b0 : (vector_index == 2'b01 && new_vector);
-    b2_finishing <= clear ? 1'b0 : (vector_index == 2'b10 && new_vector);
-    b3_finishing <= clear ? 1'b0 : (vector_index == 2'b11 && new_vector);
+    _last_element <= restart_element_index;
+    b0_finishing <= clear ? 1'b0 : (vector_index == 2'b00 && restart_element_index);
+    b1_finishing <= clear ? 1'b0 : (vector_index == 2'b01 && restart_element_index);
+    b2_finishing <= clear ? 1'b0 : (vector_index == 2'b10 && restart_element_index);
+    b3_finishing <= clear ? 1'b0 : (vector_index == 2'b11 && restart_element_index);
 
+    last_element <= _last_element;
     b0_cached <= clear ? 1'b0 : (b0_finishing ? 1'b1 : b0_cached);
     b1_cached <= clear ? 1'b0 : (b1_finishing ? 1'b1 : b1_cached);
     b2_cached <= clear ? 1'b0 : (b2_finishing ? 1'b1 : b2_cached);

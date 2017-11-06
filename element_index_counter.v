@@ -4,7 +4,6 @@ module element_index_counter(
    input wire clock,
 
    output reg [3:0] element_index,
-   output wire new_row,
    output wire new_vector
   );
 
@@ -20,7 +19,5 @@ module element_index_counter(
       default: element_index <= 4'b0000;
     endcase
   end
-
-  assign new_row = (element_index == 4'b0010) || (element_index == 4'b0101);
 
 endmodule

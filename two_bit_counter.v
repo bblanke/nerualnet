@@ -2,21 +2,19 @@ module two_bit_counter(
   input wire clock,
   input wire clear,
   input wire increment,
-  output reg [1:0] next_value,
-  output reg [1:0] counter
+  output reg [1:0] counter,
+  output wire last_value
   );
 
-  always @(clear, increment) begin
+  always @(posedge clock) begin
     case ({clear, increment})
-      2'b00: next_value = counter;
-      2'b01: next_value = counter + 2'b01;
-      2'b1x: next_value = 2'b00;
-      default: next_value = 2'b00;
+      2'b00: counter <= counter;
+      2'b01: counter <= counter + 2'b01;
+      2'b1x: counter <= 2'b00;
+      default: counter <= 2'b00;
     endcase
   end
 
-  always @(posedge clock) begin
-    counter <= next_value;
-  end
+  assign last_value = (counter == 2'b11);
 
 endmodule
