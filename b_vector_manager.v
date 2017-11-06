@@ -1,11 +1,11 @@
-module filter_memory_manager(
+module b_vector_manager(
   input wire en,
   input wire clear,
   input wire clock,
 
   // Interact with the memory
   input wire [15:0] vector_element,
-  output reg [8:0] vector_memory_address,
+  output reg [9:0] vector_memory_address,
   output reg memory_enable,
   output wire memory_write,
 
@@ -26,7 +26,7 @@ module filter_memory_manager(
 
   assign memory_write = 1'b0;
   reg new_element_ready;
-  
+
   reg b0_finishing;
   reg b1_finishing;
   reg b2_finishing;
@@ -65,7 +65,7 @@ module filter_memory_manager(
   reg _last_element;
   always @(posedge clock) begin
     memory_enable <= en ? 1'b1 : 1'b0;
-    vector_memory_address <= all_b_vectors_cached ? 9'b0 : {1'b0, vector_index, element_index};
+    vector_memory_address <= all_b_vectors_cached ? 10'b0 : {4'h0, vector_index, element_index};
     vector_cache_address <= element_index;
 
     _last_element <= restart_element_index;
