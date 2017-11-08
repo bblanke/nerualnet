@@ -11,7 +11,7 @@ module top_module(
   output wire  [ 9:0]          dut__bvm__address  ,
   output wire                  dut__bvm__enable   ,
   output wire                  dut__bvm__write    ,
-  output wire  [15:0]          dut__bvm__data     ,  // write data
+  output wire [15:0]          dut__bvm__data     ,  // write data
   input  wire [15:0]          bvm__dut__data     ,  // read data
 
   //---------------------------------------------------------------------------
@@ -20,7 +20,7 @@ module top_module(
   output wire  [ 8:0]          dut__dim__address  ,
   output wire                  dut__dim__enable   ,
   output wire                  dut__dim__write    ,
-  output wire  [15:0]          dut__dim__data     ,  // write data
+  output wire [15:0]          dut__dim__data     ,  // write data
   input  wire [15:0]          dim__dut__data     ,  // read data
 
 

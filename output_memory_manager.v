@@ -46,7 +46,7 @@ module output_memory_manager (
     endcase
     writing_output <= clear ? 1'b0 : last_element;
     writing_address <= clear ? 1'b0 : writing_output;
-    output_ram_write <= clear ? 1'b0 : writing_output;
+    output_ram_write <= clear ? 1'b0 : writing_output && en;
     output_ram_address <= clear ? 3'b000 : (writing_address ? output_ram_address + 3'b001 : output_ram_address);
     finished <= clear ? 1'b0 : (output_ram_address == 3'b111 ? 1'b1 : finished);
 

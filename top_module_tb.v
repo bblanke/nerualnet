@@ -31,6 +31,7 @@ module top_module_tb();
 
   initial begin
     $monitor("clock: %b, enable: %b, last round: %b, w0: %h, w1: %h, w2: %h, w3: %h, w4: %h, w5: %h, w6: %h, w7: %h\taddress: %h, write: %b, data: %h", clock, DUT.global_enable, DUT.s0.m0.last_element, DUT.s0.m0.w0, DUT.s0.m0.w1, DUT.s0.m0.w2, DUT.s0.m0.w3, DUT.s0.m0.w4, DUT.s0.m0.w5, DUT.s0.m0.w6, DUT.s0.m0.w7, output_ram_address, output_ram_write, output_ram_data);
+    //$monitor("clock: %b, enable: %b, a: %h, b: %h, c: %h, d: %h, should_accumulate: %b", clock, DUT.global_enable, DUT.q00.selected_a, DUT.q00.selected_b, DUT.q00.c, DUT.q00.d, DUT.q00.should_accumulate);
     clock = 1'b0;
     go = 1'b0;
     #10

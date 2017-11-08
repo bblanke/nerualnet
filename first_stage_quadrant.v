@@ -6,16 +6,16 @@ module first_stage_quadrant(
   input wire last_element,
   input wire [1:0] quadrant,
 
-  input wire [15:0] b0_element,
-  input wire [15:0] b1_element,
-  input wire [15:0] b2_element,
-  input wire [15:0] b3_element,
+  input wire signed [15:0] b0_element,
+  input wire signed [15:0] b1_element,
+  input wire signed [15:0] b2_element,
+  input wire signed [15:0] b3_element,
   input wire b_element_ready,
 
-  input wire [15:0] a0_element,
-  input wire [15:0] a1_element,
-  input wire [15:0] a2_element,
-  input wire [15:0] a3_element,
+  input wire signed [15:0] a0_element,
+  input wire signed [15:0] a1_element,
+  input wire signed [15:0] a2_element,
+  input wire signed [15:0] a3_element,
   input wire a_element_ready,
 
   output reg [15:0] z_element,
@@ -51,23 +51,21 @@ module first_stage_quadrant(
     endcase
   end
 
-  wire [31:0] product;
-  assign product = selected_b + selected_a;
+  reg [31:0] d;
+  wire [31:0] mac;
+  wire [31:0] c;
+  assign should_accumulate = b_element_ready && enable && ~vector_finishing;
+  assign c = should_accumulate ? d : 32'b0;
+  assign tc = 1'b1;
+  dotproduct_mock m0(.a(selected_a), .b(selected_b), .c(c), .tc(tc), .mac(mac));
 
-  reg [31:0] c;
+
   reg vector_finishing;
-  assign should_accumulate = b_element_ready && enable;
   always @(posedge clock) begin
-    casex ({clear, vector_finishing, should_accumulate})
-      3'b000: c <= c;
-      3'b001: c <= c + product;
-      3'b01x: c <= product;
-      3'b1xx: c <= 16'b0;
-      default: c <= 16'b0;
-    endcase
+    d <= clear || ~b_element_ready ? 32'b0 : mac;
     vector_finishing <= clear ? 1'b0 : last_element && enable;
 
-    z_element <= clear ? 16'b0 : c[15:0];
+    z_element <= clear ? 16'b0 : d[15:0];
     z_element_ready <= clear ? 1'b0 : vector_finishing;
   end
 
