@@ -53,7 +53,12 @@ module top_module(
   wire b2_cached;
   wire b3_cached;
   wire last_element;
-  b_vector_manager m1(.en(global_enable), .clear(reset), .clock(clk), .vector_element(bvm__dut__data), .vector_memory_address(dut__bvm__address), .memory_enable(dut__bvm__enable), .memory_write(dut__bvm__write), .b_element_ready(b_element_ready), .b0_element(b0_element), .b1_element(b1_element), .b2_element(b2_element), .b3_element(b3_element), .b0_cached(b0_cached), .b1_cached(b1_cached), .b2_cached(b2_cached), .b3_cached(b3_cached), .last_element(last_element));
+
+  wire m_element_requested;
+  wire m_element_ready;
+  wire [15:0] m_element;
+  wire last_m_element;
+  filter_memory_manager m1(.en(global_enable), .clear(reset), .clock(clk), .vector_element(bvm__dut__data), .vector_memory_address(dut__bvm__address), .memory_enable(dut__bvm__enable), .memory_write(dut__bvm__write), .b_element_ready(b_element_ready), .b0_element(b0_element), .b1_element(b1_element), .b2_element(b2_element), .b3_element(b3_element), .b0_cached(b0_cached), .b1_cached(b1_cached), .b2_cached(b2_cached), .b3_cached(b3_cached), .last_element(last_element), .m_element_requested(m_element_requested), .m_element_ready(m_element_ready), .m_element(m_element), .last_m_element(last_m_element));
 
   wire a_element_ready;
   wire [15:0] a0_element;
@@ -87,6 +92,6 @@ module top_module(
   assign quadrant_3 = 2'b11;
   first_stage_quadrant q11(.clock(clk), .clear(reset), .go(b2_cached), .last_element(last_element), .quadrant(quadrant_3), .b0_element(b0_element), .b1_element(b1_element), .b2_element(b2_element), .b3_element(b3_element), .b_element_ready(b_element_ready), .a0_element(a0_element), .a1_element(a1_element), .a2_element(a2_element), .a3_element(a3_element), .a_element_ready(a_element_ready), .z_element(z3_element), .z_element_ready(z3_element_ready));
 
-  second_stage s0(.clock(clk), .clear(reset), .z0_element(z0_element), .z1_element(z1_element), .z2_element(z2_element), .z3_element(z3_element), .z0_element_ready(z0_element_ready), .z1_element_ready(z1_element_ready), .z2_element_ready(z2_element_ready), .z3_element_ready(z3_element_ready));
+  second_stage s0(.clock(clk), .clear(reset), .en(global_enable), .z0_element(z0_element), .z1_element(z1_element), .z2_element(z2_element), .z3_element(z3_element), .z0_element_ready(z0_element_ready), .z1_element_ready(z1_element_ready), .z2_element_ready(z2_element_ready), .z3_element_ready(z3_element_ready), .m_element_requested(m_element_requested), .m_element_ready(m_element_ready), .m_element(m_element), .last_m_element(last_m_element));
 
 endmodule

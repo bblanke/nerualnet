@@ -14,7 +14,7 @@
 //`timescale 1ns/10ps
 
 module filter_ram (
-    input wire [8:0] address,
+    input wire [9:0] address,
     input wire [15:0] write_data,
     output reg [15:0] read_data,
     input wire enable,

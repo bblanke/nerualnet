@@ -10,7 +10,8 @@ module m_vector_manager(
 
     input wire m_element_requested,
     output reg m_element_ready,
-    output reg [15:0] m_element
+    output reg [15:0] m_element,
+    output wire last_element
   );
 
   wire filter_vector_index_resetting;
@@ -39,12 +40,14 @@ module m_vector_manager(
   reg [5:0] row;
   reg [2:0] filter_vector_index;
   assign filter_vector_index_resetting = & filter_vector_index;
+  assign last_element = filter_vector_index_resetting;
   reg address_set;
   always @(posedge clock) begin
     filter_vector_index <= clear ? 3'b000 : (enable ? filter_vector_index + 3'b001 : filter_vector_index);
     row <= (clear || filter_vector_index_resetting || m_element_requested) ? 6'b000100 + {4'h0, layer} : ( enable ? row + 6'b000100 : row );
-    address_set <= enable;
-    m_element_ready <= address_set;
+    address_set <= clear ? 1'b0 : enable;
+    m_element <= clear ? 16'b0 : vector_element;
+    m_element_ready <= clear ? 1'b0 : address_set;
     vector_memory_address <= {row, col};
   end
 

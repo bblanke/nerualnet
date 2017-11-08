@@ -3,7 +3,7 @@ module top_module_tb();
   reg go;
   wire finish;
 
-  wire [8:0] filter_ram_address;
+  wire [9:0] filter_ram_address;
   wire filter_ram_enable;
   wire filter_ram_write;
   wire [15:0] filter_ram__write_data;
@@ -30,7 +30,7 @@ module top_module_tb();
   input_ram m1(.clock(clock), .enable(input_ram_enable), .address(input_ram_address), .read_data(input_ram_read_data), .write(input_ram_write), .write_data(input_ram_write_data));
 
   initial begin
-    $monitor("clock: %b, enable: %b, z0 addr: %h, z1 addr: %h, z2 addr: %h, z3 addr: %h", clock, DUT.global_enable, DUT.s0.z0_cache_address, DUT.s0.z1_cache_address, DUT.s0.z2_cache_address, DUT.s0.z3_cache_address);
+    $monitor("clock: %b, enable: %b, z element: %h, filter element: %h, z ready: %b, filter ready: %b, output location: %b, accepting_suply: %b, last element: %b, cache: %b, cache index: %h", clock, DUT.global_enable, DUT.s0.z_element, DUT.s0.m_element, DUT.s0.z_element_ready, DUT.s0.m_element_ready, DUT.s0.m0.selected_w, DUT.s0.m0.accept_supply, DUT.s0.m0.last_element, DUT.s0.selected_cache, DUT.s0.cache_read_address);
     clock = 1'b0;
     go = 1'b0;
     #10
@@ -41,7 +41,7 @@ module top_module_tb();
     go = 1'b1;
     #10
     go = 1'b0;
-    #1200
+    #2400
     $finish;
   end
 
