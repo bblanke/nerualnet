@@ -27,10 +27,10 @@ module top_module(
   //---------------------------------------------------------------------------
   // Output data memory
   //
-  output reg  [ 2:0]          dut__dom__address  ,
-  output reg  [15:0]          dut__dom__data     ,  // write data
-  output reg                  dut__dom__enable   ,
-  output reg                  dut__dom__write    ,
+  output wire  [ 2:0]          dut__dom__address  ,
+  output wire  [15:0]          dut__dom__data     ,  // write data
+  output wire                  dut__dom__enable   ,
+  output wire                  dut__dom__write    ,
 
 
   //-------------------------------
@@ -41,7 +41,8 @@ module top_module(
   );
 
   wire global_enable;
-  enable_state_controller m0(.clear(reset), .clock(clk), .go(xxx__dut__go), .finish(), .enable(global_enable));
+  wire finished;
+  enable_state_controller m0(.clear(reset), .clock(clk), .go(xxx__dut__go), .finish(finished), .enable(global_enable));
 
   wire b_element_ready;
   wire [15:0] b0_element;
@@ -92,6 +93,6 @@ module top_module(
   assign quadrant_3 = 2'b11;
   first_stage_quadrant q11(.clock(clk), .clear(reset), .go(b2_cached), .last_element(last_element), .quadrant(quadrant_3), .b0_element(b0_element), .b1_element(b1_element), .b2_element(b2_element), .b3_element(b3_element), .b_element_ready(b_element_ready), .a0_element(a0_element), .a1_element(a1_element), .a2_element(a2_element), .a3_element(a3_element), .a_element_ready(a_element_ready), .z_element(z3_element), .z_element_ready(z3_element_ready));
 
-  second_stage s0(.clock(clk), .clear(reset), .en(global_enable), .z0_element(z0_element), .z1_element(z1_element), .z2_element(z2_element), .z3_element(z3_element), .z0_element_ready(z0_element_ready), .z1_element_ready(z1_element_ready), .z2_element_ready(z2_element_ready), .z3_element_ready(z3_element_ready), .m_element_requested(m_element_requested), .m_element_ready(m_element_ready), .m_element(m_element), .last_m_element(last_m_element));
+  second_stage s0(.clock(clk), .clear(reset), .en(global_enable), .z0_element(z0_element), .z1_element(z1_element), .z2_element(z2_element), .z3_element(z3_element), .z0_element_ready(z0_element_ready), .z1_element_ready(z1_element_ready), .z2_element_ready(z2_element_ready), .z3_element_ready(z3_element_ready), .m_element_requested(m_element_requested), .m_element_ready(m_element_ready), .m_element(m_element), .last_m_element(last_m_element), .output_ram_data(dut__dom__data), .output_ram_address(dut__dom__address), .output_ram_write(dut__dom__write), .output_ram_enable(dut__dom__enable), .finished(finished));
 
 endmodule

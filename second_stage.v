@@ -16,7 +16,14 @@ module second_stage(
   output wire m_element_requested,
   input wire m_element_ready,
   input wire [15:0] m_element,
-  input wire last_m_element
+  input wire last_m_element,
+
+  output wire [15:0] output_ram_data,
+  output wire [2:0] output_ram_address,
+  output wire output_ram_write,
+  output wire output_ram_enable,
+
+  output wire finished
 );
 
   assign write_elements = z0_element_ready || z1_element_ready || z2_element_ready || z3_element_ready;
@@ -54,7 +61,7 @@ module second_stage(
 
   wire [1:0] selected_cache;
   wire last_cache;
-  assign increment_cache = finishing_cache_index && 
+  assign increment_cache = finishing_cache_index && final_m_element;
   two_bit_counter c5(.clock(clock), .clear(clear), .increment(increment_cache), .counter(selected_cache), .last_value(last_cache));
 
   reg start_dotproduct;
@@ -62,14 +69,15 @@ module second_stage(
   reg z_element_ready;
   reg [15:0] z_element;
 
-  assign finishing_supply = last_cache && finishing_cache_index;
-  output_memory_manager m0(.clock(clock), .clear(clear), .en(en), .active_z(z_element), .active_m(m_element), .next_element(m_element_ready), .last_element(finishing_supply));
+  reg finishing_supply;
+  output_memory_manager m0(.clock(clock), .clear(clear), .en(en), .active_z(z_element), .active_m(m_element), .next_element(m_element_ready), .last_element(finishing_supply), .output_ram_address(output_ram_address), .output_ram_data(output_ram_data), .output_ram_enable(output_ram_enable), .output_ram_write(output_ram_write), .finished(finished));
 
   always @(posedge clock) begin
     start_dotproduct <= clear ? 1'b0 : write_elements;
     fetching_z <= clear ? 1'b0 : start_dotproduct;
     z_element_ready <= clear ? 1'b0 : fetching_z;
     final_m_element <= last_m_element;
+    finishing_supply <= last_cache && finishing_cache_index;
 
     case (selected_cache)
       2'b00: z_element <= fetching_z ? z0_cache_element : z_element;
