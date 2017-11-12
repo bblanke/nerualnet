@@ -9,11 +9,10 @@ module row_index_counter(
   assign last_value = (row_index == 2'b10);
 
   always @ (posedge clock) begin
-    case({clear, increment})
+    casex ({clear, increment})
       2'b00: row_index <= row_index;
       2'b01: row_index <= last_value ? 2'b00 : row_index + 2'b01;
       2'b1x: row_index <= 2'b00;
-      default: row_index <= 2'b00;
     endcase
   end
 

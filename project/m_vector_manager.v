@@ -6,7 +6,6 @@ module m_vector_manager(
     input wire [15:0] vector_element,
     output reg [9:0] vector_memory_address,
     output reg memory_enable,
-    output wire memory_write,
 
     input wire m_element_requested,
     output reg m_element_ready,
@@ -20,16 +19,19 @@ module m_vector_manager(
   enable_state_controller c0(.clock(clock), .clear(clear), .go(m_element_requested), .finish(filter_vector_index_resetting), .enable(enable));
 
   wire [1:0] layer;
+  wire increment_layer;
   assign increment_layer = enable && filter_vector_index_resetting;
   wire new_layer;
   two_bit_counter c1(.clock(clock), .clear(clear), .increment(increment_layer), .counter(layer), .last_value(new_layer));
 
   wire [1:0] minor_quadrant;
+  wire increment_minor_quadrant;
   assign increment_minor_quadrant = enable && increment_layer && new_layer;
   wire new_minor_quadrant;
   two_bit_counter c2(.clock(clock), .clear(clear), .increment(increment_minor_quadrant), .counter(minor_quadrant), .last_value(new_minor_quadrant));
 
   wire [1:0] major_quadrant;
+  wire increment_major_quadrant;
   assign increment_major_quadrant = enable && new_minor_quadrant && increment_minor_quadrant;
   wire new_major_quadrant;
   two_bit_counter c3(.clock(clock), .clear(clear), .increment(increment_major_quadrant), .counter(major_quadrant), .last_value(new_major_quadrant));
@@ -49,6 +51,7 @@ module m_vector_manager(
     m_element <= clear ? 16'b0 : vector_element;
     m_element_ready <= clear ? 1'b0 : address_set;
     vector_memory_address <= {row, col};
+    memory_enable <= clear ? 1'b0 : enable;
   end
 
 

@@ -7,11 +7,10 @@ module two_bit_counter(
   );
 
   always @(posedge clock) begin
-    case ({clear, increment})
+    casex ({clear, increment})
       2'b00: counter <= counter;
       2'b01: counter <= counter + 2'b01;
       2'b1x: counter <= 2'b00;
-      default: counter <= 2'b00;
     endcase
   end
 

@@ -6,6 +6,22 @@
 //
 // you can display the expected intermediate and output results by adding defines to vlog
 // vlog -sv +define+TB_DISPLAY_INTERMEDIATE+TB_DISPLAY_EXPECTED ece564_project_tb_top.v
+//
+// synopsys translate_off
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_fp_cmp.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_fp_cmp_DG.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_fp_mult.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_fp_mac.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_fp_dp2.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_fp_ifp_conv.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_ifp_fp_conv.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_ifp_mult.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW_ifp_addsub.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW02_mult_5_stage.v"
+`include "/afs/eos.ncsu.edu/dist/synopsys2013/syn/dw/sim_ver/DW01_addsub.v"
+
+//synopsys translate_on
+//
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -17,19 +33,19 @@ interface dut_ifc(
   // Control
   //
   logic                   dut__xxx__finish   ;
-  logic                   xxx__dut__go       ;  
+  logic                   xxx__dut__go       ;
 
   //---------------------------------------------------------------------------
-  // Filter-vector memory 
+  // Filter-vector memory
   //
-  logic   [ 8:0]          dut__bvm__address  ;
+  logic   [ 9:0]          dut__bvm__address  ;
   logic   [15:0]          dut__bvm__data     ;  // write data
   logic   [15:0]          bvm__dut__data     ;  // read data
   logic                   dut__bvm__enable   ;
   logic                   dut__bvm__write    ;
-  
+
   //---------------------------------------------------------------------------
-  // Input data memory 
+  // Input data memory
   //
   logic   [ 8:0]          dut__dim__address  ;
   logic   [15:0]          dut__dim__data     ;  // write data
@@ -39,7 +55,7 @@ interface dut_ifc(
 
 
   //---------------------------------------------------------------------------
-  // Output data memory 
+  // Output data memory
   //
   logic   [ 2:0]          dut__dom__address  ;
   logic   [15:0]          dut__dom__data     ;  // write data
@@ -56,22 +72,22 @@ interface dut_ifc(
 
     default input #1 output #1;
 
-    output      reset              ;  
+    output      reset              ;
 
     input       dut__xxx__finish   ;
-    output      xxx__dut__go       ;  
+    output      xxx__dut__go       ;
     input       dut__bvm__address  ;
-    input       dut__bvm__data     ; 
-    input       bvm__dut__data     ; 
+    input       dut__bvm__data     ;
+    input       bvm__dut__data     ;
     input       dut__bvm__enable   ;
     input       dut__bvm__write    ;
     input       dut__dim__address  ;
-    input       dut__dim__data     ; 
-    input       dim__dut__data     ; 
+    input       dut__dim__data     ;
+    input       dim__dut__data     ;
     input       dut__dim__enable   ;
     input       dut__dim__write    ;
     input       dut__dom__address  ;
-    input       dut__dom__data     ; 
+    input       dut__dom__data     ;
     input       dut__dom__enable   ;
     input       dut__dom__write    ;
 
@@ -85,24 +101,24 @@ interface dut_ifc(
   modport DUT (
     clocking   cb_dut              ,
 
-    input      reset               ,  
+    input      reset               ,
 
     output      dut__xxx__finish   ,
-    input       xxx__dut__go       ,  
+    input       xxx__dut__go       ,
     output      dut__bvm__address  ,
-    output      dut__bvm__data     , 
-    output      bvm__dut__data     , 
+    output      dut__bvm__data     ,
+    output      bvm__dut__data     ,
     output      dut__bvm__enable   ,
     output      dut__bvm__write    ,
     output      dut__dim__address  ,
-    output      dut__dim__data     , 
-    output      dim__dut__data     , 
+    output      dut__dim__data     ,
+    output      dim__dut__data     ,
     output      dut__dim__enable   ,
     output      dut__dim__write    ,
     output      dut__dom__address  ,
-    output      dut__dom__data     , 
+    output      dut__dom__data     ,
     output      dut__dom__enable   ,
-    output      dut__dom__write    
+    output      dut__dom__write
 
 
 );
@@ -111,7 +127,7 @@ interface dut_ifc(
   function void loadRam( int               mem_inst    ,
                          int               config_addr ,
                          logic [15:0   ]   config_data );
-    
+
     if (mem_inst == 0)
       tb_top.dim_mem.mem[config_addr]  = config_data ;
     else if (mem_inst == 1)
@@ -142,8 +158,8 @@ package operation;
     //
     //
 
-    class base_operation ; 
-    
+    class base_operation ;
+
         //------------------------------------------------------------------------------------------------------
         // for Debug
         time              timeTag          ;
@@ -152,16 +168,16 @@ package operation;
         //------------------------------------------------------------------------------------------------------
         // All process data from input to output
         //  - input and b/m vectors will randomized although you will see consistentcy from run to run
-        
+
         rand  shortint signed    inputArray       [12] [12]             ;  // 12x12 input
-                                                                         
+
               shortint signed    ROI              [2]  [2]  [6] [6]     ;  // input array quadrant
         rand  shortint signed    bVectors         [4]  [9]              ;  // 1x9 vectors
-                                                                         
+
               shortint signed    quadrants        [4]  [2]  [2] [2] [2] ;  // each quadrant is 4x2x2
-                                                                     
+
               shortint signed    quadrantsMerged  [4]  [4]  [4]         ;
-                                                                     
+
         rand  shortint signed    mVectors         [8]  [64]             ;
               shortint signed    outputArray      [8]                   ;
 
@@ -172,13 +188,14 @@ package operation;
         //------------------------------------------------------------------------------------------------------
         // Randomization help
 
-        
+
 
         //------------------------------------------------------------------------------------------------------
         // Temporary variable used to calculate expected results
 
-        logic [15:0] tmpVec [9] ; 
+        logic [15:0] tmpVec [9] ;
         int          tmpInt     ;
+        //longint      tmpLongInt ;
 
 
         //------------------------------------------------------------------------------------------------------
@@ -189,14 +206,14 @@ package operation;
                     this.timeTag      = $time  ;
         endfunction
 
-        
+
         //------------------------------------------------------------------------------------------------------
         // Pre randomize
 
         function void pre_randomize();	//1 -> Turns on the constraint, 0-> Turns off the constraint
             this.c_range .constraint_mode(1) ;
         endfunction : pre_randomize
-        
+
 
         //------------------------------------------------------------------------------------------------------
         // Constraints
@@ -214,7 +231,7 @@ package operation;
             }
         }
 
-    
+
         //------------------------------------------------------------------------------------------------------
         // Post randomize
 
@@ -224,7 +241,7 @@ package operation;
 
             //------------------------------------------------------------------------------------------------------
             // Calculate expected results for each step and the 1x8 output vector
- 
+
             // extract regions of interest from input array for each quadrant
             for (int quadY=0; quadY<2; quadY++)
               begin
@@ -240,7 +257,7 @@ package operation;
                   end
               end
 
-            // Now create quadrant data from the ROI 
+            // Now create quadrant data from the ROI
             //  -  dot-product of the 9-element b-vectors with each of the four 3x3 sections of the ROI
             //  - 16 dot-products creating a 4x2x2 output quadrant array
             //
@@ -258,11 +275,18 @@ package operation;
                             for (int col=0; col<2; col++)
                               begin
                                 tmpInt = 0 ;
+                                //tmpLongInt = 0 ;
                                 for (int e=0; e<$size(bVectors[layer]); e++)
                                   begin
                                     // multiple-accumulate the 1x9 b-vector against the flattens 3x3 section of the ROI
-                                    tmpInt    +=                                                   bVectors[layer][e]*ROI[quadY][quadX][row*3+e/3][col*3+e%3];
-                                    //$display("%0d %0d %0d %0d %0d = %0d %0d x %0d %0d", layer, quadY, quadX, row, col, layer, e,        row*3+e/3, col*3+e%3) ;
+                                    tmpInt      +=                                                   bVectors[layer][e]*ROI[quadY][quadX][row*3+e/3][col*3+e%3];
+                                    //tmpLongInt  +=                                                   bVectors[layer][e]*ROI[quadY][quadX][row*3+e/3][col*3+e%3];
+                                    ////$display("%0d %0d %0d %0d %0d = %0d %0d x %0d %0d", layer, quadY, quadX, row, col, layer, e,        row*3+e/3, col*3+e%3) ;
+                                    //if (tmpLongInt >= 64'h0000_0001_0000_0000)
+                                    //  begin
+                                    //    $display("OVERFLOW: b=%0d, element= %0d, %h %h", layer, e, tmpInt, tmpLongInt);
+                                    //    $finish;
+                                    //  end
                                   end
                                 // trancate and save in quadrant array
                                 quadrants [layer][quadY][quadX][row][col] = (tmpInt < 0)  ? 0 : tmpInt[31:16] ;
@@ -291,13 +315,20 @@ package operation;
             for (int m=0; m<8; m++)
               begin
                 tmpInt = 0;
+                //tmpLongInt = 0 ;
                 for (int layer=0; layer<4; layer++)
                   begin
                     for (int Y=0; Y<4; Y++)
                       begin
                         for (int X=0; X<4; X++)
                           begin
-                            tmpInt += mVectors[m][layer*16+Y*4+X]*quadrantsMerged [layer][Y][X];
+                            tmpInt     += mVectors[m][layer*16+Y*4+X]*quadrantsMerged [layer][Y][X];
+                            //tmpLongInt += mVectors[m][layer*16+Y*4+X]*quadrantsMerged [layer][Y][X];
+                            //if (tmpLongInt >= 64'h0000_0001_0000_0000)
+                            //  begin
+                            //    $display("OVERFLOW: m=%0d, element= %0d, %h %h", m, layer*16+Y*4+X, tmpInt, tmpLongInt);
+                            //    $finish;
+                            //  end
                           end
                       end
                   end
@@ -310,7 +341,7 @@ package operation;
             outputStatus = 8'd0;
 
         endfunction : post_randomize
-    
+
 
         //------------------------------------------------------------------------------------------------------
         // Methods
@@ -321,8 +352,8 @@ package operation;
             // Note: result is calculated in post_randomize
 
         endfunction : calculateResult
-    
-    
+
+
         // Displays inputs, intermediate values and output
         function void displayAll();
 
@@ -603,7 +634,7 @@ package operation;
             $fclose(fd);
 
         endfunction
-    
+
     endclass
 
 
@@ -625,7 +656,7 @@ class generator;
 
   // Temp
   logic [ 8:0] tmp_dim_addr        ;
-  logic [ 8:0] tmp_bvm_addr        ;
+  logic [ 9:0] tmp_bvm_addr        ;
   logic [ 2:0] tmp_dom_addr        ;
   logic [ 7:0] tmp_inputArray_addr ;
   logic [15:0] tmp_dom_data        ;
@@ -636,12 +667,12 @@ class generator;
   function new (
                input  vDutIfc DutIfc
                );
-    
+
     this.DutIfc  =  DutIfc  ;
 
   endfunction
 
-  task init();  
+  task init();
     $display("@%t: INFO: Initialize memories", $time);
     op = new();
     assert(op.randomize());
@@ -657,7 +688,7 @@ class generator;
         for (int x=0; x<12; x++)
           begin
             addr = y*'h10+x;
-            DutIfc.loadRam(0,addr,op.inputArray[y][x]); 
+            DutIfc.loadRam(0,addr,op.inputArray[y][x]);
             //$display("@%t: DEBUG: Load DIM: Row=%0d, Col=%0d, addr=%4h, data=%4h",  $time, y, x, addr, op.inputArray[y][x]);
           end
       end
@@ -667,7 +698,7 @@ class generator;
         for (int x=0; x<9; x++)
           begin
             addr = y*'h10+x;
-            DutIfc.loadRam(1,addr,op.bVectors[y][x]); 
+            DutIfc.loadRam(1,addr,op.bVectors[y][x]);
             //$display("@%t: DEBUG: Load b-vectors: Row=%0d, Col=%0d, addr=%4h, data=%4h",  $time, y, x, addr, op.bVectors[y][x]);
           end
       end
@@ -677,7 +708,7 @@ class generator;
         for (int x=0; x<64; x++)
           begin
             addr = y*'h40+x+'h40;
-            DutIfc.loadRam(1,addr,op.mVectors[y][x]); 
+            DutIfc.loadRam(1,addr,op.mVectors[y][x]);
             //$display("@%t: DEBUG: Load m-vectors: Row=%0d, Col=%0d, addr=%4h, data=%4h",  $time, y, x, addr, op.mVectors[y][x]);
           end
       end
@@ -701,7 +732,7 @@ class generator;
     fork
       // Output memory
       begin
-        forever 
+        forever
           begin
             @(posedge DutIfc.cb_test);
             if (DutIfc.cb_test.dut__dom__enable && DutIfc.cb_test.dut__dom__write)
@@ -725,39 +756,44 @@ class generator;
       end
       // Generate GO
       begin
-        forever 
+        forever
           begin
             @(DutIfc.cb_test);
-            if (DutIfc.cb_test.dut__xxx__finish)
+            wait(DutIfc.cb_test.dut__xxx__finish)
+
+            $display("@%t: INFO: Start", $time);
+            @(DutIfc.cb_test);
+            @(DutIfc.cb_test);
+            DutIfc.xxx__dut__go  =  1;
+            @(DutIfc.cb_test);
+            DutIfc.xxx__dut__go  =  0;
+            @(DutIfc.cb_test);
+            tId++ ;
+            // DUT may not deassert finish right away
+            while(DutIfc.cb_test.dut__xxx__finish)
               begin
-                $display("@%t: INFO: Start", $time);
                 @(DutIfc.cb_test);
-                @(DutIfc.cb_test);
-                DutIfc.xxx__dut__go  =  1;
-                @(DutIfc.cb_test);
-                DutIfc.xxx__dut__go  =  0;
-                @(DutIfc.cb_test);
-                tId++ ;
               end
             while(~DutIfc.cb_test.dut__xxx__finish)
               begin
                 @(DutIfc.cb_test);
               end
+            $display("@%t: INFO: Done", $time);
+            if (|(~op.outputStatus))
+              begin
+                $display("@%t: ERROR: A bad or no output data was written to the output array: %8b", $time, op.outputStatus);
+              end
+            else
+              begin
+                $display("@%t: PASS: Output array status: %8b", $time, op.outputStatus);
+              end
+
             if (tId == max_ops)
               begin
-                $display("@%t: INFO: Done", $time);
-                if (|(~op.outputStatus))
-                  begin
-                    $display("@%t: ERROR: A bad or no output data was written to the output array: %8b", $time, op.outputStatus);
-                  end
-                else
-                  begin
-                    $display("@%t: PASS: Output array status: %8b", $time, op.outputStatus);
-                  end
-                break;
+                $finish;
               end
             //check();
-          end 
+          end
       end
     join_any
     @(DutIfc.cb_test.dut__xxx__finish);
@@ -771,7 +807,7 @@ endclass
 // Environment
 //
 class Environment;
-  
+
   //vTBIfc  vDut_ifc ;
   vDutIfc   DutIfc   ;
 
@@ -781,7 +817,7 @@ class Environment;
                //input  vTBIfc dut_if
                input  vDutIfc DutIfc
                );
-    
+
     this.DutIfc  =  DutIfc  ;
 
   endfunction
@@ -818,15 +854,15 @@ class Environment;
   endtask
 
 endclass
-  
+
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 // Test
 program automatic test(
-                      dut_ifc  DutIfc     
+                      dut_ifc  DutIfc
                       //input logic reset
                       );
-  
+
   Environment env ;
 
   initial
@@ -838,7 +874,7 @@ program automatic test(
       env.reset     ( );
       env.run       ( );
       env.wrap_up   ( );
-      
+
       $finish;
 
     end
@@ -856,35 +892,11 @@ module tb_top ();
   parameter CLK_PHASE=5  ;
 
   //---------------------------------------------------------------------------
-  // b-vector memory 
-  wire [ 8:0]          dut__bvm__address  ;
-  wire [15:0]          dut__bvm__data     ;  // write data
-  wire [15:0]          bvm__dut__data     ;  // read data
-  wire                 dut__bvm__enable   ;
-  wire                 dut__bvm__write    ;
-
-  //---------------------------------------------------------------------------
-  // Input data memory 
-  wire [ 8:0]          dut__dim__address  ;
-  wire [15:0]          dut__dim__data     ;  // write data
-  wire [15:0]          dim__dut__data     ;  // read data
-  wire                 dut__dim__enable   ;
-  wire                 dut__dim__write    ;
-
-  //---------------------------------------------------------------------------
-  // Output data memory 
-  wire [ 2:0]          dut__dom__address  ;
-  wire [15:0]          dut__dom__data     ;  // write data
-  wire                 dut__dom__enable   ;
-  wire                 dut__dom__write    ;
-
-  //---------------------------------------------------------------------------
   // General
   //
   reg      clk              ;
   wire     reset            ;
   reg      xxx__dut__go     ;
-  wire     dut__xxx__finish ;
 
 
   //---------------------------------------------------------------------------
@@ -897,19 +909,19 @@ module tb_top ();
   //---------------------------------------------------------------------------
   // DUT
   //  - use interface for connection to DUT
-  dut_wrapper dut_wrapper (  
+  dut_wrapper dut_wrapper (
 
       .dut_if             ( dut_if.DUT          ),
       .clk                ( clk                 )
 
       );
 
-  sram  #(.ADDR_WIDTH  ( 9),
+  sram  #(.ADDR_WIDTH  (10),
           .DATA_WIDTH  (16))
          bvm_mem  (
           .address      ( dut_if.dut__bvm__address  ),
-          .write_data   ( dut_if.dut__bvm__data     ), 
-          .read_data    ( dut_if.bvm__dut__data     ), 
+          .write_data   ( dut_if.dut__bvm__data     ),
+          .read_data    ( dut_if.bvm__dut__data     ),
           .enable       ( dut_if.dut__bvm__enable   ),
           .write        ( dut_if.dut__bvm__write    ),
 
@@ -921,8 +933,8 @@ module tb_top ();
           dim_mem (
 
           .address     ( dut_if.dut__dim__address  ),
-          .write_data  ( dut_if.dut__dim__data     ), 
-          .read_data   ( dut_if.dim__dut__data     ), 
+          .write_data  ( dut_if.dut__dim__data     ),
+          .read_data   ( dut_if.dim__dut__data     ),
           .enable      ( dut_if.dut__dim__enable   ),
           .write       ( dut_if.dut__dim__write    ),
 
@@ -934,7 +946,7 @@ module tb_top ();
          dom_mem  (
 
           .address     ( dut_if.dut__dom__address  ),
-          .write_data  ( dut_if.dut__dom__data     ), 
+          .write_data  ( dut_if.dut__dom__data     ),
           .read_data   (                           ),
           .enable      ( dut_if.dut__dom__enable   ),
           .write       ( dut_if.dut__dom__write    ),
@@ -951,12 +963,12 @@ module tb_top ();
   //
   test  tb  (
             .DutIfc  ( dut_if.TB )
-       
+
             );
 
   //---------------------------------------------------------------------------
   //  clk
-  initial 
+  initial
     begin
         clk                     = 1'b0;
         forever # CLK_PHASE clk = ~clk;
@@ -977,29 +989,29 @@ endmodule
 // DUT wrapper
 module dut_wrapper (
             dut_ifc                     dut_if  ,
-            input  wire                 clk             
+            input  wire                 clk
 );
 
-  dut dut(
+  MyDesign dut(
 
           .dut__xxx__finish   ( dut_if.dut__xxx__finish   ),
-          .xxx__dut__go       ( dut_if.xxx__dut__go       ),  
+          .xxx__dut__go       ( dut_if.xxx__dut__go       ),
           .dut__bvm__address  ( dut_if.dut__bvm__address  ),
-          .dut__bvm__data     ( dut_if.dut__bvm__data     ), 
-          .bvm__dut__data     ( dut_if.bvm__dut__data     ), 
+          .dut__bvm__data     ( dut_if.dut__bvm__data     ),
+          .bvm__dut__data     ( dut_if.bvm__dut__data     ),
           .dut__bvm__enable   ( dut_if.dut__bvm__enable   ),
           .dut__bvm__write    ( dut_if.dut__bvm__write    ),
           .dut__dim__address  ( dut_if.dut__dim__address  ),
-          .dut__dim__data     ( dut_if.dut__dim__data     ), 
-          .dim__dut__data     ( dut_if.dim__dut__data     ), 
+          .dut__dim__data     ( dut_if.dut__dim__data     ),
+          .dim__dut__data     ( dut_if.dim__dut__data     ),
           .dut__dim__enable   ( dut_if.dut__dim__enable   ),
           .dut__dim__write    ( dut_if.dut__dim__write    ),
           .dut__dom__address  ( dut_if.dut__dom__address  ),
-          .dut__dom__data     ( dut_if.dut__dom__data     ), 
+          .dut__dom__data     ( dut_if.dut__dom__data     ),
           .dut__dom__enable   ( dut_if.dut__dom__enable   ),
           .dut__dom__write    ( dut_if.dut__dom__write    ),
-                                                  
-          .reset              ( dut_if.reset              ),  
+
+          .reset              ( dut_if.reset              ),
           .clk                ( clk                       )
          );
 
@@ -1007,62 +1019,3 @@ module dut_wrapper (
 
 
 endmodule
-
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-// DUT
-
-module dut (
-
-            //---------------------------------------------------------------------------
-            // Control
-            //
-            output reg                  dut__xxx__finish   ,
-            input  wire                 xxx__dut__go       ,  
-
-            //---------------------------------------------------------------------------
-            // b-vector memory 
-            //
-            output reg  [ 8:0]          dut__bvm__address  ,
-            output reg                  dut__bvm__enable   ,
-            output reg                  dut__bvm__write    ,
-            output reg  [15:0]          dut__bvm__data     ,  // write data
-            input  wire [15:0]          bvm__dut__data     ,  // read data
-            
-            //---------------------------------------------------------------------------
-            // Input data memory 
-            //
-            output reg  [ 8:0]          dut__dim__address  ,
-            output reg                  dut__dim__enable   ,
-            output reg                  dut__dim__write    ,
-            output reg  [15:0]          dut__dim__data     ,  // write data
-            input  wire [15:0]          dim__dut__data     ,  // read data
-
-
-            //---------------------------------------------------------------------------
-            // Output data memory 
-            //
-            output reg  [ 2:0]          dut__dom__address  ,
-            output reg  [15:0]          dut__dom__data     ,  // write data
-            output reg                  dut__dom__enable   ,
-            output reg                  dut__dom__write    ,
-
-
-            //-------------------------------
-            // General
-            //
-            input  wire                 clk             ,
-            input  wire                 reset  
-
-            );
-
-  //---------------------------------------------------------------------------
-  //
-  //<<<<----  YOUR CODE HERE    ---->>>>
-  //
-  `include "v564.vh"
-  // 
-  //---------------------------------------------------------------------------
-
-endmodule
-

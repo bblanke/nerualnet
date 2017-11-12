@@ -7,6 +7,7 @@ module dotproduct_mock (
   output wire signed [31:0] mac
 );
 
-  assign mac = a + b + c;
+  DW02_mac #(16, 16) U1 (.A(a), .B(b), .C(c), .TC(tc), .MAC(mac));
+  //assign mac = a + b + c;
 
 endmodule

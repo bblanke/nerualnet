@@ -7,11 +7,10 @@ module four_bit_counter(
   );
 
   always @(posedge clock) begin
-    case ({clear, increment})
+    casex ({clear, increment})
       2'b00: counter <= counter;
       2'b01: counter <= counter + 4'b0001;
       2'b1x: counter <= 4'b0000;
-      default: counter <= 4'b0000;
     endcase
   end
 

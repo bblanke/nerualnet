@@ -7,7 +7,7 @@ module enable_state_controller (
 );
 
   always @(posedge clock) begin
-    casex({clear, finish, go})
+    casex ({clear, finish, go})
       3'b000: enable <= enable;
       3'b001: enable <= 1'b1;
       3'b01x: enable <= 1'b0;

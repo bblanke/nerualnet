@@ -13,39 +13,28 @@
 
 //`timescale 1ns/10ps
 
-module input_ram (
-    input wire [8:0] address,
+module output_ram (
+    input wire [2:0] address,
     input wire [15:0] write_data,
-    output reg [15:0] read_data,
     input wire enable,
     input wire write,
     input wire clock
     );
 
-
-    initial begin
-      $readmemh("input.hex", memory);
-    end
     //--------------------------------------------------------
     // Associative memory
 
-    reg [15:0] memory [0:511];
-
-
-    //--------------------------------------------------------
-    // Read
-
-    always @(*)
-      begin
-        #4 read_data = (enable && ~write) ? memory [address] : 16'hx;
-      end
+    reg [15:0] memory [0:7];
 
     //--------------------------------------------------------
     // Write
 
     always @(posedge clock)
       begin
-        if (enable && write) memory [address] = write_data;
+        if (enable && write) begin
+         memory [address] = write_data;
+         $display("writing: %h to address: %h", write_data, address);
+         end
       end
     //--------------------------------------------------------
 

@@ -6,15 +6,15 @@ module column_index_counter(
     output wire will_reset
   );
 
+  wire clear_counter;
   assign will_reset = (column_index == 2'b10);
   assign clear_counter = clear || will_reset;
 
   always @(posedge clock) begin
-    case ({clear_counter, en})
+    casex ({clear_counter, en})
       2'b00: column_index <= column_index;
       2'b01: column_index <= column_index + 4'b0001;
       2'b1x: column_index <= 2'b00;
-      default: column_index <= 2'b00;
     endcase
   end
 

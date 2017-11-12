@@ -37,7 +37,7 @@ module filter_ram (
 
     always @(*)
       begin
-        #4 read_data = memory[address];
+        #4 read_data = (enable && ~write) ? memory [address] : 16'hx;
       end
 
     //--------------------------------------------------------
@@ -45,7 +45,7 @@ module filter_ram (
 
     always @(posedge clock)
       begin
-        if (write) memory[address] = write_data;
+        if (enable && write) memory [address] = write_data;
       end
     //--------------------------------------------------------
 
